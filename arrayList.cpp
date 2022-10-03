@@ -52,7 +52,7 @@ class arrayList{
             delete [] aux; 
             */
         }
-        bool shrinkSize(){
+        void shrinkSize(){
             //cout << "alo" << endl;
             type* aux = NULL;
             if(1 < currentSize){
@@ -76,7 +76,6 @@ class arrayList{
                 list = NULL;
                 empty = true;
             }
-            return true;
         }
         //capacity
         int getCurrentSize() const{
@@ -89,7 +88,6 @@ class arrayList{
             /*
             function that add n units of space to the array
             */ 
-            cout << currentSize <<" " << n << endl;
             if(currentSize < n){
                 while(currentSize < n){
                     expandSize();
@@ -108,22 +106,34 @@ class arrayList{
         void reserve(const int &i){
             resize(i + elemCount);
         }
-        void moveElements(int i, int n){
-            cout << i << " " << n << endl; 
-            for(int j = elemCount - 1; i < j ; j--){
-                list[j] = list[j - 1];
+        void moveElementsForward(const int &i, const int &n){
+            for(int j = 0; j <= n; j++){
+                list[elemCount - j] = list[i + n - j];
+                list[i + n - j] = 0;
             }
-            list[i] = 0;
+        }
+        void moveElementsBackward(const int &i, const int &n){
+            for(int j = i; j < elemCount - 1; j++)
+                list[j] = list[j + n];
         }
         void gap(const int &i, const int &n = 1){
             if(-1 < i){
-                if(elemCount < (i+n)){
+                if(elemCount < (i + n))
                     resize(i + n);
+                else
+                    resize(elemCount + n);
+                moveElementsForward(i, n);  
+            } 
+        }
+        void crease(const int &i, const int &n = 1){
+            if(-1 < i){
+                moveElementsBackward(i , n);
+                if(elemCount < (i+n)){
+                    resize(i);
                 }
                 else{
-                    resize(elemCount + n);
-                }
-                moveElements(i , n);  
+                    resize(elemCount - n);
+                }  
             } 
         }
         bool isEmpty() const{
@@ -142,10 +152,10 @@ class arrayList{
             else
                 return list[0];
         }
-        type at(int i) const{
+        type& at(const int &i){
             return list[i % elemCount];
         }
-        type operator [] (int i)const {
+        type& operator [](const int &i) {
             return at(i);
         }
         void print() const{
@@ -174,16 +184,18 @@ class arrayList{
                 shrinkSize();
             return val;
         }
-        void insert(int i, type elem){
+        void insert(const int &i, const type &elem){
             if(-1 < i){
                 gap(i);
                 list[i] = elem;
             }
         }
         void erase(const int &i){
-            
+            if(-1 < i && i < elemCount){
+                list[i] = 0;
+                crease(i);
+            }
         }
-        /*
         void insert(const arrayList<type> &al, int i){
             if(-1 < i){
                 int alcount = al.getElemCount();
@@ -191,29 +203,20 @@ class arrayList{
                 for(int j = i; j = i + alcount; i++)
                     list[i] = al[j - i];
             }
-        }*/
-        
+        }
+        void concatenate(arrayList<type> &al){
+            for(int i = 0; i < al.getElemCount(); i++)
+                push(al[i]);
+        }
+        arrayList<type>& operator +(arrayList<type> &al){
+            concatenate(al);
+            return *this;
+        }
+        /*
+        void swap(arrayList<type> &al){
+            arrayList<type> aux = al;
+            al = *this;
+            *this = aux;
+        }
+        */
 };
-
-int main(){
-    arrayList<int> al1, al2;
-    
-    
-    //al2 = arrayList<int>(al1);
-    
-    /*
-    al1.push(12);
-    
-    al1.resize(8);
-    al1.print();
-
-    al1.gap(5, 1);
-
-    al1.print();
-    al1.insert(12, 7);
-    
-    al1.print();
-    al1.resize(8);
-    al1.print();*/
-    return 0;
-}
