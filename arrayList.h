@@ -167,7 +167,14 @@ class arrayList{
                 cout << list[elemCount - 1] << "]" <<endl;
             }
         }
-        //Modifiers
+        const int search(const type& elem){
+            for(int i = 0; i < elemCount; i++){
+                if(list[i] == elem)
+                    return i;
+            }
+            return -1;
+        }
+        //Modifiers      
         void push(const type &elem){
             if(elemCount == currentSize){
                 //cout << elemCount << endl;
