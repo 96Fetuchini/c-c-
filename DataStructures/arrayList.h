@@ -12,27 +12,17 @@ class arrayList{
         int maxSize; //Max amount of ellements that the arrat can have
         int elemCount;//element elemCount
     public:
-        arrayList(){
-            list = NULL;
-            elemCount = 0;
-            currentSize = 0;
-            empty = true;
+        arrayList(type* l = NULL, int ec = 0, int cs = 0, bool e = true){
+            this->list = NULL;
+            this->elemCount = ec;
+            this->currentSize = ec;
+            this->empty = e;
         }
-        arrayList(int elemCount){
-            this->elemCount = elemCount;
-        }
-        /*
         arrayList(const arrayList<type>& al){
-            currentSize = al.currentSize; 
-            elemCount = al.elemCount;
-            empty = al.empty;
-            list = new type[currentSize];
-            for(int i = 0; i < elemCount; i++)
-                list[i] = al.list[i];
+            copy(al);
         }
-        */
         ~arrayList(){
-            free (list);
+            delete[] list;
         }
         void expandSize(){
             type* aux = NULL;
@@ -72,7 +62,7 @@ class arrayList{
             }
             else{
                 if(0 < currentSize && list != NULL)
-                    free(list);//delete [] list;
+                    delete[] list;
                 list = NULL;
                 empty = true;
             }
@@ -167,14 +157,7 @@ class arrayList{
                 cout << list[elemCount - 1] << "]" <<endl;
             }
         }
-        const int search(const type& elem){
-            for(int i = 0; i < elemCount; i++){
-                if(list[i] == elem)
-                    return i;
-            }
-            return -1;
-        }
-        //Modifiers      
+        //Modifiers
         void push(const type &elem){
             if(elemCount == currentSize){
                 //cout << elemCount << endl;
@@ -203,6 +186,15 @@ class arrayList{
                 crease(i);
             }
         }
+        void copy(const arrayList<type>& al){
+            currentSize = al.currentSize; 
+            elemCount = al.elemCount;
+            empty = al.empty;
+            list = new type[currentSize];
+            for(int i = 0; i < elemCount; i++)
+                list[i] = al.list[i];
+        }
+        /*
         void insert(const arrayList<type> &al, int i){
             if(-1 < i){
                 int alcount = al.getElemCount();
@@ -210,20 +202,27 @@ class arrayList{
                 for(int j = i; j = i + alcount; i++)
                     list[i] = al[j - i];
             }
-        }
+        }*/
         void concatenate(arrayList<type> &al){
             for(int i = 0; i < al.getElemCount(); i++)
                 push(al[i]);
         }
-        arrayList<type>& operator +(arrayList<type> &al){
+        arrayList<type>& operator+(arrayList<type> &al){
             concatenate(al);
             return *this;
         }
-        /*
-        void swap(arrayList<type> &al){
-            arrayList<type> aux = al;
-            al = *this;
-            *this = aux;
+        arrayList<type>& operator= (arrayList<type> &al){
+            if (this == &al)
+                return *this;
+            
+            delete [] list;
+            copy(al);
+            return *this;
         }
-        */
 };
+template<class T>
+void swap(arrayList<T> &a, arrayList<T> &b){
+    arrayList<T> aux = a;
+    a = b;
+    b = aux;
+}
